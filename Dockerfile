@@ -17,7 +17,8 @@ RUN apt-get update && \
     x11vnc \
     fluxbox \
     eterm \
-    wget && \
+    wget \
+    unzip && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
     rm -rf /var/cache/* /var/log/apt/* /tmp/*
@@ -28,6 +29,11 @@ RUN wget --no-check-certificate -O /tmp/google-chrome-stable.deb https://dl.goog
     apt-get update && \
     apt-get install -y --no-install-recommends /tmp/google-chrome-stable.deb /tmp/chrome-remote-desktop.deb && \
     rm /tmp/google-chrome-stable.deb /tmp/chrome-remote-desktop.deb
+
+RUN google-chrome --version
+
+# Install chromedriver
+RUN wget https://storage.googleapis.com/chrome-for-testing-public/126.0.6478.0/linux64/chromedriver-linux64.zip && unzip chromedriver-linux64.zip && mv chromedriver-linux64/chromedriver /usr/local/bin/ && rm -rf chromedriver*
 
 # Configure the environment
 RUN useradd -m -G chrome-remote-desktop,pulse-access chrome && \
@@ -55,3 +61,4 @@ EXPOSE 5900
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
